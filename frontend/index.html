@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sistema MES | Monitoreo de Producción</title>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <header>
+        <div>
+            <h1>Sistema MES</h1>
+            <p>Monitoreo y Control de Producción</p>
+        </div>
+
+        <div>
+            <span>Servidor Local</span>
+        </div>
+    </header>
+
+
+    <main>
+
+        <!-- INDICADORES PRINCIPALES -->
+        <section>
+            <h2>Resumen de Producción</h2>
+
+            <div class="indicadores">
+
+                <div class="card">
+                    <h3>Producción actual</h3>
+                    <p id="produccion">850</p>
+                    <span>piezas</span>
+                </div>
+
+                <div class="card">
+                    <h3>Piezas buenas</h3>
+                    <p id="buenas">825</p>
+                    <span>piezas</span>
+                </div>
+
+                <div class="card">
+                    <h3>Defectuosas</h3>
+                    <p id="defectuosas">25</p>
+                    <span>piezas</span>
+                </div>
+
+                <div class="card">
+                    <h3>Máquinas activas</h3>
+                    <p id="activas">3</p>
+                    <span>máquinas</span>
+                </div>
+
+                <div class="card">
+                    <h3>Máquinas detenidas</h3>
+                    <p id="detenidas">1</p>
+                    <span>máquina</span>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ORDEN ACTUAL -->
+        <section class="panel">
+
+            <h2>Orden de Producción Actual</h2>
+
+            <div class="orden">
+
+                <div>
+                    <span>Orden</span>
+                    <strong id="orden-codigo">OP001</strong>
+                </div>
+
+                <div>
+                    <span>Producto</span>
+                    <strong id="orden-producto">Producto A</strong>
+                </div>
+
+                <div>
+                    <span>Progreso</span>
+                    <strong id="orden-progreso">850 / 1000</strong>
+                </div>
+
+                <div>
+                    <span>Estado</span>
+                    <strong id="orden-estado" class="produciendo">EN PRODUCCIÓN</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- PRUEBAS DE RENDIMIENTO -->
+<section class="panel">
+
+    <h2>Pruebas de Rendimiento</h2>
+
+    <p>Evaluación del procesamiento con diferentes volúmenes de datos.</p>
+
+    <br>
+
+    <button onclick="pruebaRendimiento(100)">
+        Probar 100 registros
+    </button>
+
+    <button onclick="pruebaRendimiento(1000)">
+        Probar 1,000 registros
+    </button>
+
+    <button onclick="pruebaRendimiento(10000)">
+        Probar 10,000 registros
+    </button>
+
+    <br><br>
+
+    <p>
+        Resultado:
+        <strong id="resultadoPrueba">
+            Sin prueba realizada
+        </strong>
+    </p>
+
+</section>
+
+        <!-- ESTADO DE MÁQUINAS -->
+        <section class="panel">
+
+            <h2>Estado de Máquinas</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Máquina</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+
+<tbody id="tabla-maquinas">
+</tbody>
+
+            </table>
+
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

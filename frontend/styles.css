@@ -1,0 +1,145 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f8;
+    color: #1f2937;
+}
+
+/* ENCABEZADO */
+header {
+    background-color: #1f2937;
+    color: white;
+    padding: 22px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    font-size: 28px;
+}
+
+header p {
+    margin-top: 5px;
+    color: #d1d5db;
+}
+
+header span {
+    background-color: #374151;
+    padding: 10px 16px;
+    border-radius: 8px;
+}
+
+/* CONTENIDO */
+main {
+    width: 90%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+h2 {
+    margin-bottom: 18px;
+    font-size: 20px;
+}
+
+/* INDICADORES */
+.indicadores {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background-color: white;
+    padding: 22px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.card h3 {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 12px;
+}
+
+.card p {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.card span {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* PANELES */
+.panel {
+    background-color: white;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ORDEN DE PRODUCCIÓN */
+.orden {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.orden div {
+    display: flex;
+    flex-direction: column;
+}
+
+.orden span {
+    color: #6b7280;
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+
+/* TABLA */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 14px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+    background-color: #f9fafb;
+}
+
+/* ESTADOS */
+.produciendo {
+    color: #15803d;
+    font-weight: bold;
+}
+
+.detenida {
+    color: #dc2626;
+    font-weight: bold;
+}
+
+/* ADAPTACIÓN A PANTALLAS PEQUEÑAS */
+@media (max-width: 900px) {
+    .indicadores {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .orden {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
