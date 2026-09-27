@@ -26,6 +26,15 @@ jobs:
       - name: Ejecutar pruebas unitarias
         working-directory: ./backend
         run: npm test
+        
+- name: Agregar Docker al PATH
+  shell: powershell
+  run: |
+    "C:\Users\alexc\AppData\Local\Programs\DockerDesktop\resources\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8
+
+- name: Verificar Docker
+  shell: powershell
+  run: docker version
 
       - name: Construir imagen Docker
         run: docker build -t mes-devops .
