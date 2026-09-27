@@ -1,0 +1,9 @@
+.git
+.github
+backend/node_modules
+node_modules
+backend/.env
+.env
+docs
+k8s
+mes-chart

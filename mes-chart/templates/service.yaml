@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mes-service
+spec:
+  selector:
+    app: mes
+  type: {{ .Values.service.type }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.service.port }}
+      targetPort: 3000

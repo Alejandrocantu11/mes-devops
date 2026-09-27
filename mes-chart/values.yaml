@@ -1,0 +1,19 @@
+replicaCount: 1
+
+image:
+  repository: mes-devops
+  tag: latest
+  pullPolicy: Never
+
+service:
+  type: NodePort
+  port: 3000
+
+database:
+  host: host.minikube.internal
+  port: "5432"
+  name: mes_db
+  user: postgres
+
+secret:
+  name: mes-db-secret
