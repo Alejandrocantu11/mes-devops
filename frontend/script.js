@@ -48,8 +48,7 @@ function pruebaRendimiento(cantidad) {
 
 async function cargarMaquinas() {
     try {
-        const respuesta = await fetch('http://localhost:3000/api/maquinas');
-
+         const respuesta = await fetch('/api/maquinas');  
         if (!respuesta.ok) {
             throw new Error('Error al obtener las máquinas');
         }
@@ -106,7 +105,7 @@ cargarMaquinas();
 
 async function cargarOrdenActual() {
     try {
-        const respuesta = await fetch('http://localhost:3000/api/ordenes');
+        const respuesta = await fetch('/api/ordenes');
 
         if (!respuesta.ok) {
             throw new Error('Error al obtener las órdenes');
@@ -151,7 +150,7 @@ cargarOrdenActual();
 
 async function cargarResumen() {
     try {
-        const respuesta = await fetch('http://localhost:3000/api/resumen');
+        const respuesta = await fetch('/api/resumen');
 
         if (!respuesta.ok) {
             throw new Error('Error al obtener el resumen');
@@ -184,8 +183,7 @@ cargarResumen();
 // Mostrar todas las órdenes registradas
 async function cargarOrdenes() {
     try {
-        const respuesta = await fetch('http://localhost:3000/api/ordenes');
-
+        const respuesta = await fetch('/api/ordenes');
         if (!respuesta.ok) {
             throw new Error('Error al obtener las órdenes');
         }
@@ -233,17 +231,17 @@ document.getElementById('form-orden').addEventListener('submit', async function(
     const cantidad = document.getElementById('cantidad').value;
 
     try {
-        const respuesta = await fetch('http://localhost:3000/api/ordenes', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                codigo: codigo,
-                producto: producto,
-                cantidad_objetivo: Number(cantidad)
-            })
-        });
+const respuesta = await fetch('/api/ordenes', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        codigo: codigo,
+        producto: producto,
+        cantidad_objetivo: Number(cantidad)
+    })
+});
 
         if (!respuesta.ok) {
             throw new Error('Error al crear la orden');
@@ -272,12 +270,12 @@ async function eliminarOrden(id) {
     }
 
     try {
-        const respuesta = await fetch(
-            `http://localhost:3000/api/ordenes/${id}`,
-            {
-                method: 'DELETE'
-            }
-        );
+      const respuesta = await fetch(
+    `/api/ordenes/${id}`,
+    {
+        method: 'DELETE'
+    }
+);  
 
         if (!respuesta.ok) {
             throw new Error('Error al eliminar la orden');
