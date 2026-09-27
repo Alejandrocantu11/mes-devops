@@ -1,31 +1,4 @@
-// Datos iniciales de producción
-let produccion = 850;
-let buenas = 825;
-let defectuosas = 25;
 
-// Simulación de producción
-function actualizarProduccion() {
-
-    // Se produce una nueva pieza
-    produccion++;
-
-    // Simulamos que aproximadamente algunas piezas pueden salir defectuosas
-    const piezaDefectuosa = Math.random() < 0.05;
-
-    if (piezaDefectuosa) {
-        defectuosas++;
-    } else {
-        buenas++;
-    }
-
-    // Actualizar información en la interfaz
-    document.getElementById("produccion").textContent = produccion;
-    document.getElementById("buenas").textContent = buenas;
-    document.getElementById("defectuosas").textContent = defectuosas;
-}
-
-// Generar información cada 5 segundos
-setInterval(actualizarProduccion, 5000);
 
 // PRUEBAS DE RENDIMIENTO
 function pruebaRendimiento(cantidad) {

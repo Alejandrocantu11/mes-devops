@@ -1,34 +1,37 @@
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
+const path = require('path');
+require('dotenv').config();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Conexión con PostgreSQL
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'mes_db',
-    password: 'Alejandro11',
-    port: 5432
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: Number(process.env.DB_PORT)
 });
 
 // Probar conexión
 pool.connect()
     .then(client => {
-        console.log('✅ Conectado correctamente a PostgreSQL');
+        console.log(' Conectado correctamente a PostgreSQL');
         client.release();
     })
     .catch(error => {
-        console.error('❌ Error conectando a PostgreSQL:', error.message);
+        console.error(' Error conectando a PostgreSQL:', error.message);
     });
 
 // Ruta de prueba
 app.get('/', (req, res) => {
-    res.send('Backend MES funcionando');
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 // Obtener máquinas
