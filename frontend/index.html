@@ -96,6 +96,67 @@
 
         </section>
 
+        <!-- GESTIÓN DE ÓRDENES -->
+        <section class="panel">
+
+            <h2>Gestión de Órdenes de Producción</h2>
+
+            <p>Crear y eliminar órdenes directamente en la base de datos.</p>
+
+            <br>
+
+            <form id="form-orden">
+
+                <input
+                    type="text"
+                    id="codigo"
+                    placeholder="Código (Ej. OP002)"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="producto"
+                    placeholder="Producto"
+                    required
+                >
+
+                <input
+                    type="number"
+                    id="cantidad"
+                    placeholder="Cantidad objetivo"
+                    min="1"
+                    required
+                >
+
+                <button type="submit">
+                    Agregar orden
+                </button>
+
+            </form>
+
+            <br>
+
+            <h3>Órdenes registradas</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Producto</th>
+                        <th>Objetivo</th>
+                        <th>Producidas</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tabla-ordenes">
+                </tbody>
+            </table>
+
+        </section>
+
         <!-- PRUEBAS DE RENDIMIENTO -->
 <section class="panel">
 

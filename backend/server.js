@@ -58,6 +58,64 @@ app.get('/api/ordenes', async (req, res) => {
     }
 });
 
+// Crear nueva orden de producción
+app.post('/api/ordenes', async (req, res) => {
+    try {
+        const { codigo, producto, cantidad_objetivo } = req.body;
+
+        if (!codigo || !producto || !cantidad_objetivo) {
+            return res.status(400).json({
+                error: 'Código, producto y cantidad objetivo son obligatorios'
+            });
+        }
+
+        const resultado = await pool.query(
+            `INSERT INTO ordenes_produccion
+            (codigo, producto, cantidad_objetivo, cantidad_producida, estado)
+            VALUES ($1, $2, $3, 0, 'New')
+            RETURNING *`,
+            [codigo, producto, cantidad_objetivo]
+        );
+
+        res.status(201).json(resultado.rows[0]);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: 'Error creando orden de producción'
+        });
+    }
+});
+
+// Eliminar orden de producción
+app.delete('/api/ordenes/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const resultado = await pool.query(
+            'DELETE FROM ordenes_produccion WHERE id = $1 RETURNING *',
+            [id]
+        );
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({
+                error: 'Orden no encontrada'
+            });
+        }
+
+        res.json({
+            mensaje: 'Orden eliminada correctamente',
+            orden: resultado.rows[0]
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: 'Error eliminando orden de producción'
+        });
+    }
+});
+
 // Obtener resumen de producción
 app.get('/api/resumen', async (req, res) => {
     try {

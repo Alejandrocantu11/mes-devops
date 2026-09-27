@@ -176,3 +176,119 @@ async function cargarResumen() {
 }
 
 cargarResumen();
+
+// ========================================
+// GESTIÓN DE ÓRDENES DE PRODUCCIÓN
+// ========================================
+
+// Mostrar todas las órdenes registradas
+async function cargarOrdenes() {
+    try {
+        const respuesta = await fetch('http://localhost:3000/api/ordenes');
+
+        if (!respuesta.ok) {
+            throw new Error('Error al obtener las órdenes');
+        }
+
+        const ordenes = await respuesta.json();
+
+        const tabla = document.getElementById('tabla-ordenes');
+
+        tabla.innerHTML = '';
+
+        ordenes.forEach(orden => {
+
+            const fila = document.createElement('tr');
+
+            fila.innerHTML = `
+                <td>${orden.codigo}</td>
+                <td>${orden.producto}</td>
+                <td>${orden.cantidad_objetivo}</td>
+                <td>${orden.cantidad_producida}</td>
+                <td>${orden.estado}</td>
+                <td>
+                    <button onclick="eliminarOrden(${orden.id})">
+                        Eliminar
+                    </button>
+                </td>
+            `;
+
+            tabla.appendChild(fila);
+        });
+
+    } catch (error) {
+        console.error('Error cargando órdenes:', error);
+    }
+}
+
+cargarOrdenes();
+
+// Crear nueva orden desde la interfaz
+document.getElementById('form-orden').addEventListener('submit', async function(event) {
+
+    event.preventDefault();
+
+    const codigo = document.getElementById('codigo').value;
+    const producto = document.getElementById('producto').value;
+    const cantidad = document.getElementById('cantidad').value;
+
+    try {
+        const respuesta = await fetch('http://localhost:3000/api/ordenes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                codigo: codigo,
+                producto: producto,
+                cantidad_objetivo: Number(cantidad)
+            })
+        });
+
+        if (!respuesta.ok) {
+            throw new Error('Error al crear la orden');
+        }
+
+        await respuesta.json();
+
+        // Limpiar formulario
+        document.getElementById('form-orden').reset();
+
+        // Actualizar tabla
+        cargarOrdenes();
+
+    } catch (error) {
+        console.error('Error creando orden:', error);
+    }
+});
+
+// Eliminar orden desde la interfaz
+async function eliminarOrden(id) {
+
+    const confirmar = confirm('¿Deseas eliminar esta orden?');
+
+    if (!confirmar) {
+        return;
+    }
+
+    try {
+        const respuesta = await fetch(
+            `http://localhost:3000/api/ordenes/${id}`,
+            {
+                method: 'DELETE'
+            }
+        );
+
+        if (!respuesta.ok) {
+            throw new Error('Error al eliminar la orden');
+        }
+
+        await respuesta.json();
+
+        // Actualizar tabla después de eliminar
+        cargarOrdenes();
+
+    } catch (error) {
+        console.error('Error eliminando orden:', error);
+    }
+}
