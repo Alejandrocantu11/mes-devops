@@ -38,3 +38,15 @@ jobs:
 
       - name: Construir imagen Docker
         run: docker build -t mes-devops .
+
+      - name: Cargar imagen en Minikube
+        run: minikube image load mes-devops:latest
+
+      - name: Desplegar con Helm
+        run: helm upgrade --install mes-release ./mes-chart
+
+      - name: Reiniciar deployment
+        run: kubectl rollout restart deployment mes-deployment
+
+      - name: Verificar despliegue
+        run: kubectl rollout status deployment mes-deployment --timeout=120s
