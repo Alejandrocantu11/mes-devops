@@ -157,6 +157,76 @@
 
         </section>
 
+<!-- GESTIÓN DE MATERIALES - FASE 3 -->
+<section class="panel">
+
+    <h2>Gestión de Materiales de Producción</h2>
+
+    <p>
+        Registrar, consultar y eliminar materiales
+        asociados a las órdenes de producción.
+    </p>
+
+    <br>
+
+    <form id="form-material">
+
+        <select id="material-orden" required>
+            <option value="">Seleccionar orden de producción</option>
+        </select>
+
+        <input
+            type="text"
+            id="material-nombre"
+            placeholder="Nombre del material"
+            maxlength="100"
+            required
+        >
+
+        <input
+            type="number"
+            id="material-cantidad"
+            placeholder="Cantidad requerida"
+            min="1"
+            step="1"
+            required
+        >
+
+        <select id="material-unidad" required>
+            <option value="">Seleccionar unidad</option>
+            <option value="piezas">Piezas</option>
+            <option value="kg">Kilogramos</option>
+            <option value="litros">Litros</option>
+            <option value="metros">Metros</option>
+        </select>
+
+        <button type="submit">
+            Agregar material
+        </button>
+
+    </form>
+
+    <br>
+
+    <h3>Materiales registrados</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Orden</th>
+                <th>Material</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+
+        <tbody id="tabla-materiales">
+        </tbody>
+    </table>
+
+</section>
+
         <!-- PRUEBAS DE RENDIMIENTO -->
 <section class="panel">
 

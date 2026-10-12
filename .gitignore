@@ -1,3 +1,12 @@
 backend/node_modules/
 node_modules/
 .env
+grafana-smtp.env
+
+# Credenciales y configuraciones privadas
+.env
+.env/
+.env.*
+**/.env
+**/.env/
+**/.env.*

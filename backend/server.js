@@ -3,6 +3,14 @@ const { Pool } = require('pg');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
+const { validarMaterial } = require('./utils/validarMaterial');
+const { registrarEvento } = require('./utils/logger');
+const {
+    registro,
+    materialesCreados,
+    materialesEliminados,
+    erroresValidacion
+} = require('./utils/metricas');
 
 const app = express();
 
@@ -138,7 +146,169 @@ app.get('/api/resumen', async (req, res) => {
     }
 });
 
+// ========================================
+// FASE 3 - GESTIÓN DE MATERIALES
+// ========================================
+
+// Obtener materiales de producción
+app.get('/api/materiales', async (req, res) => {
+    try {
+        const resultado = await pool.query(`
+            SELECT
+                m.id,
+                m.orden_id,
+                o.codigo AS orden_codigo,
+                m.nombre,
+                m.cantidad,
+                m.unidad,
+                m.fecha_registro
+            FROM materiales_produccion m
+            INNER JOIN ordenes_produccion o
+                ON m.orden_id = o.id
+            ORDER BY m.id
+        `);
+
+        res.json(resultado.rows);
+
+    } catch (error) {
+        console.error('Error obteniendo materiales:', error);
+
+        res.status(500).json({
+            error: 'Error obteniendo materiales de producción'
+        });
+    }
+});
+
+// Agregar nuevo material de producción
+app.post('/api/materiales', async (req, res) => {
+
+    const errorValidacion = validarMaterial(req.body);
+
+    if (errorValidacion) {
+        registrarEvento('WARN', 'MATERIAL_VALIDACION_FALLIDA', {
+            motivo: errorValidacion
+        });
+
+        erroresValidacion.inc();
+
+        return res.status(400).json({
+            error: errorValidacion
+        });
+    }
+    try {
+        const { orden_id, nombre, cantidad, unidad } = req.body;
+
+        // Validar datos de entrada
+        if (
+            !Number.isInteger(orden_id) ||
+            orden_id <= 0 ||
+            typeof nombre !== 'string' ||
+            !nombre.trim() ||
+            nombre.trim().length > 100 ||
+            !Number.isInteger(cantidad) ||
+            cantidad <= 0 ||
+            typeof unidad !== 'string' ||
+            !unidad.trim() ||
+            unidad.trim().length > 30
+        ) {
+            return res.status(400).json({
+                error: 'Datos inválidos. Verifica orden, nombre, cantidad y unidad.'
+            });
+        }
+
+        // Verificar que la orden exista
+        const orden = await pool.query(
+            'SELECT id FROM ordenes_produccion WHERE id = $1',
+            [orden_id]
+        );
+
+        if (orden.rows.length === 0) {
+            return res.status(404).json({
+                error: 'La orden de producción no existe'
+            });
+        }
+
+        // Registrar material
+        const resultado = await pool.query(
+            `INSERT INTO materiales_produccion
+            (orden_id, nombre, cantidad, unidad)
+            VALUES ($1, $2, $3, $4)
+            RETURNING *`,
+            [orden_id, nombre.trim(), cantidad, unidad.trim()]
+        );
+
+        registrarEvento('INFO', 'MATERIAL_CREADO', {
+            material_id: resultado.rows[0].id,
+            orden_id: resultado.rows[0].orden_id,
+            cantidad: resultado.rows[0].cantidad
+        });
+
+        materialesCreados.inc();
+
+        res.status(201).json(resultado.rows[0]);
+
+    } catch (error) {
+        console.error('Error agregando material:', error);
+
+        res.status(500).json({
+            error: 'Error al registrar el material'
+        });
+    }
+});
+
+// Eliminar material de producción
+app.delete('/api/materiales/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!/^[1-9]\d*$/.test(id)) {
+            return res.status(400).json({
+                error: 'ID de material inválido'
+            });
+        }
+
+        const resultado = await pool.query(
+            'DELETE FROM materiales_produccion WHERE id = $1 RETURNING *',
+            [id]
+        );
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({
+                error: 'Material no encontrado'
+            });
+        }
+
+        registrarEvento('INFO', 'MATERIAL_ELIMINADO', {
+            material_id: Number(req.params.id)
+        });
+
+        materialesEliminados.inc();
+
+        res.json({
+            mensaje: 'Material eliminado correctamente',
+            material: resultado.rows[0]
+        });
+
+    } catch (error) {
+        console.error('Error eliminando material:', error);
+
+        res.status(500).json({
+            error: 'Error al eliminar el material'
+        });
+    }
+});
+
 const PORT = 3000;
+
+// Endpoint de métricas para Prometheus
+app.get('/metrics', async (req, res) => {
+    try {
+        res.set('Content-Type', registro.contentType);
+        res.end(await registro.metrics());
+    } catch (error) {
+        res.status(500).send('Error al obtener las métricas');
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`🚀 Servidor MES ejecutándose en puerto ${PORT}`);

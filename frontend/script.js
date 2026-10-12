@@ -290,3 +290,185 @@ async function eliminarOrden(id) {
         console.error('Error eliminando orden:', error);
     }
 }
+// ========================================
+// FASE 3 - GESTIÓN DE MATERIALES
+// ========================================
+
+// Cargar órdenes disponibles en el selector
+async function cargarOrdenesMateriales() {
+    try {
+        const respuesta = await fetch('/api/ordenes');
+
+        if (!respuesta.ok) {
+            throw new Error('Error al obtener las órdenes');
+        }
+
+        const ordenes = await respuesta.json();
+
+        const selector = document.getElementById('material-orden');
+
+        selector.innerHTML =
+            '<option value="">Seleccionar orden de producción</option>';
+
+        ordenes.forEach(orden => {
+            const opcion = document.createElement('option');
+
+            opcion.value = orden.id;
+            opcion.textContent = `${orden.codigo} - ${orden.producto}`;
+
+            selector.appendChild(opcion);
+        });
+
+    } catch (error) {
+        console.error('Error cargando órdenes para materiales:', error);
+    }
+}
+
+// Ejecutar al abrir el dashboard
+cargarOrdenesMateriales();
+
+// ========================================
+// MOSTRAR MATERIALES REGISTRADOS
+// ========================================
+
+async function cargarMateriales() {
+    try {
+        const respuesta = await fetch('/api/materiales');
+
+        if (!respuesta.ok) {
+            throw new Error('Error al obtener los materiales');
+        }
+
+        const materiales = await respuesta.json();
+        const tabla = document.getElementById('tabla-materiales');
+
+        tabla.innerHTML = '';
+
+        materiales.forEach(material => {
+            const fila = document.createElement('tr');
+
+            const datos = [
+                material.orden_codigo,
+                material.nombre,
+                material.cantidad,
+                material.unidad
+            ];
+
+            datos.forEach(dato => {
+                const celda = document.createElement('td');
+                celda.textContent = dato;
+                fila.appendChild(celda);
+            });
+
+            const celdaAccion = document.createElement('td');
+            const boton = document.createElement('button');
+
+            boton.textContent = 'Eliminar';
+            boton.type = 'button';
+            boton.dataset.id = material.id;
+
+            celdaAccion.appendChild(boton);
+            fila.appendChild(celdaAccion);
+
+            tabla.appendChild(fila);
+        });
+
+    } catch (error) {
+        console.error('Error cargando materiales:', error);
+    }
+}
+
+// Cargar materiales al abrir el dashboard
+cargarMateriales();
+
+// ========================================
+// ELIMINAR MATERIALES DESDE LA INTERFAZ
+// ========================================
+
+document.getElementById('tabla-materiales').addEventListener('click', async (event) => {
+
+    if (event.target.tagName !== 'BUTTON') {
+        return;
+    }
+
+    const id = event.target.dataset.id;
+
+    const confirmar = confirm(
+        '¿Estás seguro de que deseas eliminar este material?'
+    );
+
+    if (!confirmar) {
+        return;
+    }
+
+    try {
+        const respuesta = await fetch(`/api/materiales/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!respuesta.ok) {
+            throw new Error('No se pudo eliminar el material');
+        }
+
+        alert('Material eliminado correctamente');
+
+        // Actualizar la tabla automáticamente
+        await cargarMateriales();
+
+    } catch (error) {
+        console.error('Error eliminando material:', error);
+        alert('Ocurrió un error al eliminar el material');
+    }
+});
+
+// ========================================
+// AGREGAR MATERIALES DESDE LA INTERFAZ
+// ========================================
+
+document.getElementById('form-material').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const orden_id = Number(document.getElementById('material-orden').value);
+    const nombre = document.getElementById('material-nombre').value.trim();
+    const cantidad = Number(document.getElementById('material-cantidad').value);
+    const unidad = document.getElementById('material-unidad').value;
+
+    if (!orden_id || !nombre || !Number.isInteger(cantidad) || cantidad <= 0 || !unidad) {
+        alert('Completa correctamente todos los campos');
+        return;
+    }
+
+    try {
+        const respuesta = await fetch('/api/materiales', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                orden_id,
+                nombre,
+                cantidad,
+                unidad
+            })
+        });
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(resultado.error || 'Error al agregar material');
+        }
+
+        alert('Material agregado correctamente');
+
+        // Limpiar formulario
+        document.getElementById('form-material').reset();
+
+        // Actualizar tabla sin recargar la página
+        await cargarMateriales();
+
+    } catch (error) {
+        console.error('Error agregando material:', error);
+        alert(error.message);
+    }
+});
+
